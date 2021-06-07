@@ -1,6 +1,4 @@
-from datetime import date, datetime, time
-
-
+from datetime import  datetime
 class Bank:
     def __init__(self,name,phone):
         self.name=name
@@ -33,23 +31,66 @@ class Bank:
         else:
             self.balance-=amount
             return f"Hello  {self.name} you have deposited {amount}RWF you can withdraw {self.show_balance()} "
-    def borrow(self,amount):
-        self.loan+=amount
-        return f"Hello {self.name} you have get a loan {self.loan}"
-
-    def repay(self,amount):                                           
-        self.loan-=amount
-        return f"Hello {self.name} you have repaid a loan{amount}"
-
-
+   
     def show_statement(self):
         for transaction in self.statement:
               amount=transaction["amount"]
               narration=transaction["narration"]
               time=transaction["time"]
-              date=time.strf("%d/%m/%y")
+              date=time.strftime("%d/%m/%y")
               print(f"{date} : {narration}  {amount}")
         
               return         
         
-                         
+    def  borrow(self,amount):
+        if amount<0:
+            return f"Hello {self.name} your not allowed to borrow"
+        elif self.loan>0:
+            return f"hello {self.name} you have a loan already"
+        elif amount>=0.1*self.balance:
+            return   f"Hello {self.name} you are not qualified to borrow"
+        else:
+            loan=amount*1.05
+            self.loan=loan
+            self.balance+=loan
+            self.balance+=amount
+            now=datetime.now()
+            transaction={
+                "amount":amount,
+                "time":now,
+                "narration":"you  have deposited"
+            }
+            self.statement.append(transaction)
+   
+            return f"Hello {self.name} you can borrow this  {amount}"
+
+
+    def repay(self,amount):
+        if amount<0:
+            return f"Hello {self.name} your loan is not valid"
+        
+        elif amount>self.loan:
+            self.loan-=amount
+            return f"Hello {self.name} your loan has been decreased {self.loan}"
+        else :
+            diff=amount-self.loan
+            self.loan=0
+            self.deposit(diff)
+            self.balance+=amount
+            now=datetime.now()
+            transaction={
+                "amount":amount,
+                "time":now,
+                "narration":"you  have deposited"
+            }
+            self.statement.append(transaction)
+   
+            return f"Hello {self.name} your loan is cleared"
+            
+
+             
+
+
+                
+
+                             
